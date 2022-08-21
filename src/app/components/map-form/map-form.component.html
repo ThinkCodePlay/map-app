@@ -1,0 +1,22 @@
+<form (ngSubmit)="onSubmit()">
+  <h2>Enter Your ZIP Code:</h2>
+  <div class="row">
+    <mat-form-field class="example-full-width col-sm-10" appearance="fill">
+      <mat-label>ZIP code</mat-label>
+      <input type="text" matInput [formControl]="zipFormControl" />
+      <mat-hint>Enter a valid ZIP code</mat-hint>
+      <mat-error *ngIf="zipFormControl.hasError('required')">
+        ZIP code is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <button
+      class="col-sm-2"
+      type="submit"
+      mat-raised-button
+      color="primary"
+      [disabled]="!zipFormControl.valid"
+    >
+      Submit
+    </button>
+  </div>
+</form>
