@@ -18,9 +18,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MapComponent } from './components/map/map.component';
+import { PopupComponent } from './components/popup/popup.component';
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, MapFormComponent, MapComponent],
+  declarations: [AppComponent, HeaderComponent, MapFormComponent, MapComponent, PopupComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-// import { IGeoJson } from '../interface/geoJson';
 @Injectable({
   providedIn: 'root',
 })
@@ -13,6 +12,7 @@ export class MapsService {
   // private geoJson;
 
   // getGeoJson(zipcode: string) {
+    // if zipcode
   //   const req = this.http
   //     .get(
   //       `${environment.boundaries_url}/boundary/zipcode?zipcode=${zipcode}`,

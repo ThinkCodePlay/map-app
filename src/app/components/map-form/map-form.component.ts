@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MapsService } from 'src/app/services/maps.service';
+import { WeatherService } from 'src/app/services/weather.service';
 
 @Component({
   selector: 'app-map-form',
@@ -13,7 +14,10 @@ export class MapFormComponent implements OnInit {
     Validators.minLength(5),
   ]);
 
-  constructor(private mapsService: MapsService) {}
+  constructor(
+    private mapsService: MapsService,
+    private weatherService: WeatherService
+  ) {}
 
   ngOnInit(): void {}
 
@@ -21,6 +25,7 @@ export class MapFormComponent implements OnInit {
     if (this.zipFormControl.value) {
       const zipcode = this.zipFormControl.value;
       this.mapsService.getGeoJson(zipcode.toString());
+      this.weatherService.getLocalWeather(zipcode.toString());
     }
   }
 }

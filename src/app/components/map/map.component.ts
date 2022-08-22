@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { Subscription } from 'rxjs';
-import { FeatureCollection } from 'src/app/interface/geoJson';
-// import { IGeoJson } from 'src/app/interface/geoJson';
 import { MapsService } from 'src/app/services/maps.service';
+import { WeatherService } from 'src/app/services/weather.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -13,25 +12,41 @@ import { environment } from 'src/environments/environment';
 })
 export class MapComponent implements OnInit, OnDestroy {
   style = 'mapbox://styles/mapbox/streets-v11';
-  lat = 37.75;
-  lng = -122.41;
   map!: mapboxgl.Map;
   source: any;
-  markers: any;
   hoveredStateId: any = null;
   mapGeoJson: any;
   popup: any;
+  localWeather: any;
 
-  constructor(private mapsService: MapsService) {}
+  constructor(
+    private mapsService: MapsService,
+    private weatherService: WeatherService
+  ) {}
 
   private mapSub: Subscription = new Subscription();
+  private weatherSub: Subscription = new Subscription();
 
   ngOnInit(): void {
     this.buildMap();
-    this.mapSub = this.mapsService.newGeoJsonEmitter.subscribe((geoJson) => {
-      this.mapGeoJson = geoJson;
-      this.drawPolygon(geoJson);
-    });
+    this.mapSub = this.mapsService.newGeoJsonEmitter.subscribe(
+      (geoJson) => {
+        this.mapGeoJson = geoJson;
+        this.drawPolygon(geoJson);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+    this.weatherSub = this.weatherService.newWeatherJsonEmitter.subscribe(
+      (weather) => {
+        this.localWeather = weather;
+        console.log(this.localWeather);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 
   ngOnDestroy(): void {
@@ -90,11 +105,16 @@ export class MapComponent implements OnInit, OnDestroy {
             { hover: true }
           );
 
+          console.log(this.localWeather);
+
           this.popup = new mapboxgl.Popup({
             className: 'my-class',
           })
             .setLngLat(e.lngLat)
-            .setHTML('<h1>Hello World!</h1>')
+            .setHTML(
+              `<h2>time: ${this.localWeather.location.localtime}</h2>
+              <h2>tempreture: ${this.localWeather.current.temp_c}  &#8451</h2>`
+            )
             .setMaxWidth('300px')
             .addTo(this.map);
         }
