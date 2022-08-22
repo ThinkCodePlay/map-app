@@ -18,8 +18,9 @@ export class MapComponent implements OnInit, OnDestroy {
   map!: mapboxgl.Map;
   source: any;
   markers: any;
-
+  hoveredStateId: any = null;
   mapGeoJson: any;
+  popup: any;
 
   constructor(private mapsService: MapsService) {}
 
@@ -44,6 +45,7 @@ export class MapComponent implements OnInit, OnDestroy {
       style: this.style,
       zoom: 12,
       center: [-77.371303, 39.014584],
+      // center: [35.21371, 31.768319], // jerusalem
     });
     this.map.addControl(new mapboxgl.NavigationControl());
 
@@ -55,6 +57,7 @@ export class MapComponent implements OnInit, OnDestroy {
           type: 'FeatureCollection',
           features: [],
         },
+        generateId: true,
       });
 
       /// create map layers do display polygon
@@ -67,6 +70,47 @@ export class MapComponent implements OnInit, OnDestroy {
           'fill-color': '#0080ff', // blue color fill
           'fill-opacity': 0.5,
         },
+      });
+
+      // When the user moves their mouse over the state-fill layer, we'll update the
+      // feature state for the feature under the mouse.
+      this.map.on('mouseenter', 'poly', (e) => {
+        console.log(e);
+
+        if (e.features.length > 0) {
+          if (this.hoveredStateId !== null) {
+            this.map.setFeatureState(
+              { source: 'poly', id: this.hoveredStateId },
+              { hover: false }
+            );
+          }
+          this.hoveredStateId = e.features[0].id;
+          this.map.setFeatureState(
+            { source: 'poly', id: this.hoveredStateId },
+            { hover: true }
+          );
+
+          this.popup = new mapboxgl.Popup({
+            className: 'my-class',
+          })
+            .setLngLat(e.lngLat)
+            .setHTML('<h1>Hello World!</h1>')
+            .setMaxWidth('300px')
+            .addTo(this.map);
+        }
+      });
+
+      // When the mouse leaves the state-fill layer, update the feature state of the
+      // previously hovered feature.
+      this.map.on('mouseleave', 'poly', () => {
+        if (this.hoveredStateId !== null) {
+          this.map.setFeatureState(
+            { source: 'poly', id: this.hoveredStateId },
+            { hover: false }
+          );
+        }
+        this.hoveredStateId = null;
+        this.popup.remove();
       });
     });
   }
