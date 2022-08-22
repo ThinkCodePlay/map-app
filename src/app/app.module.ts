@@ -8,6 +8,7 @@ import { HeaderComponent } from './components/header/header.component';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,15 +17,17 @@ import { MapFormComponent } from './components/map-form/map-form.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { MapComponent } from './components/map/map.component';
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, MapFormComponent],
+  declarations: [AppComponent, HeaderComponent, MapFormComponent, MapComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FormsModule,
+    HttpClientModule,
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
