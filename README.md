@@ -1,27 +1,33 @@
-# MobileyeMap
+# Angular Map App🗺️ 
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.1.3.
+### What is this app? Where am I?
+Use this app to find the location by ZIP code and see the local time and weather.
+
+Check out the **live demo** [here](https://map-bsqxe7o4f-thinkcodeplay.vercel.app/).
+
+## Usage
+
+### Dependencies
+
+The frontend of this app was built using [**Angular**](https://angular.io/) framework.
+For styling used [**Bootstrap**](https://getbootstrap.com/) and [**Angular  Material UI**](https://material.angular.io/).
+
+Three APIs were used to fetch the data:
+1. [Mapbox GL JS](https://www.mapbox.com/mapbox-gljs)
+2. [boundaries-io](https://rapidapi.com/VanitySoft/api/boundaries-io-1)
+3. [weatherapi](https://www.weatherapi.com)
+
+To integrate with these APIs you must acquire a **valid token** and insert it into the environment variables.
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+App requires [Node.js](https://nodejs.org/) and [Angular](https://angular.io/)  to run.
 
-## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Install the dependencies with:
+```sh
+npm install
+```
 
-## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`.
