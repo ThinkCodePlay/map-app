@@ -20,9 +20,11 @@ import { MatInputModule } from '@angular/material/input';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MapComponent } from './components/map/map.component';
 import { NetworkInterceptor } from './services/network.interceptor';
+import { SpinnerComponent } from './components/UI/spinner/spinner.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, MapFormComponent, MapComponent],
+  declarations: [AppComponent, HeaderComponent, MapFormComponent, MapComponent, SpinnerComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -37,6 +39,7 @@ import { NetworkInterceptor } from './services/network.interceptor';
     MatFormFieldModule,
     MatInputModule,
     NgbModule,
+    MatSnackBarModule
   ],
   providers: [
     {

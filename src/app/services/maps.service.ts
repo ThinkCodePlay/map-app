@@ -39,24 +39,6 @@ export class MapsService {
   //   }
   // }
 
-  calculateCenter(coords: any): [number, number] {
-    let minLng = coords[0][0];
-    let maxLng = coords[0][0];
-    let minLat = coords[0][1];
-    let maxLat = coords[0][1];
-    // coords.forEach((element) => {
-    //   const [lng, lat] = element;
-    //   minLat = Math.min(minLat, lat);
-    //   maxLat = Math.max(maxLat, lat);
-    //   minLng = Math.min(minLng, lng);
-    //   maxLng = Math.max(minLng, lng);
-    // });
-    const centerLng = (minLng + maxLng) / 2;
-    const centerLat = (minLat + maxLat) / 2;
-    console.log(centerLng, centerLat);
-
-    return [centerLng, centerLat];
-  }
 
   // dummy data
   private geoJson = {

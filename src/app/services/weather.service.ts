@@ -10,9 +10,9 @@ export class WeatherService {
   constructor(private http: HttpClient) {}
   newWeatherJsonEmitter = new Subject<any>();
   private localWeather: any;
-  getLocalWeather(zipcode: string) {
+  getLocalWeatherByZipCode(zipcode: string) {
     if (zipcode) {
-      const req = this.http
+      this.http
         .get(
           `http://api.weatherapi.com/v1/current.json?key=${environment.weather_key}&q=${zipcode}&aqi=no`
         )

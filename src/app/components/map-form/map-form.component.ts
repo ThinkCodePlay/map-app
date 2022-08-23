@@ -8,7 +8,7 @@ import { MapsService } from 'src/app/services/maps.service';
   styleUrls: ['./map-form.component.scss'],
 })
 export class MapFormComponent implements OnInit {
-  inProgess : boolean = false
+  inProgess: boolean = false;
   zipFormControl = new FormControl('', [
     Validators.required,
     Validators.minLength(5),
@@ -17,14 +17,17 @@ export class MapFormComponent implements OnInit {
 
   constructor(private mapsService: MapsService) {}
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   onSubmit() {
     if (this.zipFormControl.value) {
       const zipcode = this.zipFormControl.value;
       this.mapsService.getGeoJson(zipcode);
+      // this.zipFormControl.setValue('')
+      // this.zipFormControl.setErrors(null);
+      // this.zipFormControl.reset();
+      // this.zipFormControl.markAsPristine();
+      // this.zipFormControl.markAsUntouched();
     }
   }
 }

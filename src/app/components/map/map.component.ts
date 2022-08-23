@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { IFeatureCollection } from 'src/app/interface/geoJson';
 import { IMapBoxMouseEvent } from 'src/app/interface/mouseevent';
 import { MapsService } from 'src/app/services/maps.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 import { WeatherService } from 'src/app/services/weather.service';
 import { environment } from 'src/environments/environment';
 
@@ -13,21 +14,22 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./map.component.scss'],
 })
 export class MapComponent implements OnInit, OnDestroy {
-  style = 'mapbox://styles/mapbox/streets-v11';
+  style: string = 'mapbox://styles/mapbox/streets-v11';
   map!: mapboxgl.Map;
   source: any;
   hoveredStateId: any = null;
-  mapGeoJson: any;
   popup: any;
   localWeather: any;
 
-  constructor(
-    private mapsService: MapsService,
-    private weatherService: WeatherService
-  ) {}
-
+  // create subscription to get service events
   private mapSub: Subscription = new Subscription();
   private weatherSub: Subscription = new Subscription();
+
+  constructor(
+    private mapsService: MapsService,
+    private weatherService: WeatherService,
+    private snackbarService: SnackbarService
+  ) {}
 
   ngOnInit(): void {
     this.buildMap();
@@ -35,37 +37,40 @@ export class MapComponent implements OnInit, OnDestroy {
     this.mapSub = this.mapsService.newGeoJsonEmitter.subscribe(
       (geoJson: IFeatureCollection) => {
         if (geoJson.features.length > 0) {
-          this.mapGeoJson = geoJson;
           this.drawPolygon(geoJson);
           this.centerOnMapPolygon(geoJson);
           const currentZipcode = this.mapsService.currentZipcode;
-          console.log(currentZipcode);
-          this.weatherService.getLocalWeather(currentZipcode); // get local time and weather only if zipcode returned data
+          this.weatherService.getLocalWeatherByZipCode(currentZipcode);
         } else {
-          // TODO Toast
-          alert('no data for this zipcode');
+          this.snackbarService.openSnackBar(
+            'No data for this zipcode',
+            'Dismiss'
+          );
         }
       },
       (err) => {
-        // TODO Toast
+        this.snackbarService.openSnackBar(
+          'Hmm... It seems an error accord ',
+          'Dismiss'
+        );
         console.log(err);
       }
     );
     // subscribe to weather service
     this.weatherSub = this.weatherService.newWeatherJsonEmitter.subscribe(
       (weather) => {
-        console.log('weather', weather);
         this.localWeather = weather;
-        console.log(this.localWeather);
       },
       (err) => {
-        // TODO Toast
-        console.log(err);
+        this.snackbarService.openSnackBar(
+          'Hmm... It seems an error accord ',
+          'Dismiss'
+        );
       }
     );
   }
 
-  // prevent memory leak!
+  // to prevent memory leak!
   ngOnDestroy(): void {
     this.mapSub.unsubscribe();
     this.weatherSub.unsubscribe();
@@ -77,11 +82,14 @@ export class MapComponent implements OnInit, OnDestroy {
       container: 'map',
       style: this.style,
       zoom: 12,
-      center: [-77.371303, 39.014584],
-      // center: [35.21371, 31.768319], // jerusalem
+      center: [35.21371, 31.768319], // jerusalem
     });
     this.map.addControl(new mapboxgl.NavigationControl());
 
+    this.mapOnLoadSetting();
+  }
+
+  mapOnLoadSetting() {
     this.map.on('load', (event) => {
       /// register source
       this.map.addSource('poly', {
@@ -105,50 +113,57 @@ export class MapComponent implements OnInit, OnDestroy {
         },
       });
 
-      // When the user moves their mouse over the state-fill layer, we'll update the
-      // feature state for the feature under the mouse.
-      this.map.on('mouseenter', 'poly', (e: IMapBoxMouseEvent) => {
-        if (e.features && e.features.length > 0) {
-          if (this.hoveredStateId !== null) {
-            this.map.setFeatureState(
-              { source: 'poly', id: this.hoveredStateId },
-              { hover: false }
-            );
-          }
-          this.hoveredStateId = e.features[0].id;
-          this.map.setFeatureState(
-            { source: 'poly', id: this.hoveredStateId },
-            { hover: true }
-          );
+      this.mapOnMouseEnterSetting();
+      this.mapOnMouseLeave();
+    });
+  }
 
-          console.log(this.localWeather);
-
-          this.popup = new mapboxgl.Popup({
-            className: 'my-class',
-          })
-            .setLngLat(e.lngLat)
-            // can't create component because the html is baked into the popup
-            .setHTML(
-              `<h2>time: ${this.localWeather.location.localtime}</h2>
-              <h2>tempreture: ${this.localWeather.current.temp_c}  &#8451</h2>`
-            )
-            .setMaxWidth('300px')
-            .addTo(this.map);
-        }
-      });
-
-      // When the mouse leaves the state-fill layer, update the feature state of the
-      // previously hovered feature.
-      this.map.on('mouseleave', 'poly', () => {
+  mapOnMouseEnterSetting() {
+    // When the user moves their mouse over the state-fill layer, we'll update the
+    // feature state for the feature under the mouse.
+    this.map.on('mouseenter', 'poly', (e: IMapBoxMouseEvent) => {
+      if (e.features && e.features.length > 0) {
         if (this.hoveredStateId !== null) {
           this.map.setFeatureState(
             { source: 'poly', id: this.hoveredStateId },
             { hover: false }
           );
         }
-        this.hoveredStateId = null;
-        this.popup.remove();
-      });
+        this.hoveredStateId = e.features[0].id;
+        this.map.setFeatureState(
+          { source: 'poly', id: this.hoveredStateId },
+          { hover: true }
+        );
+        // create popup on enter polygon at mouse enter location
+        this.popup = new mapboxgl.Popup({
+          className: 'my-class',
+        })
+          .setLngLat(e.lngLat)
+          // can't create component because the html is baked into the popup
+          .setHTML(
+            `<label>Name: ${this.localWeather.location.name}, ${this.localWeather.location.region}, ${this.localWeather.location.country}</label><br />
+            <label>Local Date and Time: ${this.localWeather.location.localtime}</label><br />
+            <label>Tempreture: ${this.localWeather.current.temp_c}  &#8451 <img src="${this.localWeather.current.condition.icon}" alt="condition-icon"></label>
+            `
+          )
+          .setMaxWidth('300px')
+          .addTo(this.map);
+      }
+    });
+  }
+
+  mapOnMouseLeave() {
+    // When the mouse leaves the state-fill layer, update the feature state of the
+    // previously hovered feature.
+    this.map.on('mouseleave', 'poly', () => {
+      if (this.hoveredStateId !== null) {
+        this.map.setFeatureState(
+          { source: 'poly', id: this.hoveredStateId },
+          { hover: false }
+        );
+      }
+      this.hoveredStateId = null;
+      this.popup.remove();
     });
   }
 
