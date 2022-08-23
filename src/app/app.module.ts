@@ -22,9 +22,11 @@ import { MapComponent } from './components/map/map.component';
 import { NetworkInterceptor } from './services/network.interceptor';
 import { SpinnerComponent } from './components/UI/spinner/spinner.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { LayoutComponent } from './components/UI/layout/layout.component';
+import { PageNotFoundComponent } from './components/UI/page-not-found/page-not-found.component';
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, MapFormComponent, MapComponent, SpinnerComponent],
+  declarations: [AppComponent, HeaderComponent, MapFormComponent, MapComponent, SpinnerComponent, LayoutComponent, PageNotFoundComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

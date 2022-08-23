@@ -62,7 +62,7 @@ export class MapComponent implements OnInit, OnDestroy {
       },
       (err) => {
         this.snackbarService.openSnackBar(
-          'Hmm... It seems an error accord ',
+          'Hmm... Something is wrong with the weather',
           'Dismiss'
         );
       }
@@ -118,37 +118,39 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   mapOnMouseEnterSetting() {
-    // When the user moves their mouse over the state-fill layer, we'll update the
-    // feature state for the feature under the mouse.
-    this.map.on('mouseenter', 'poly', (e: IMapBoxMouseEvent) => {
-      if (e.features && e.features.length > 0) {
-        if (this.hoveredStateId !== null) {
+    try {
+      // When the user moves their mouse over the state-fill layer, we'll update the
+      // feature state for the feature under the mouse.
+      this.map.on('mouseenter', 'poly', (e: IMapBoxMouseEvent) => {
+        if (e.features && e.features.length > 0) {
+          if (this.hoveredStateId !== null) {
+            this.map.setFeatureState(
+              { source: 'poly', id: this.hoveredStateId },
+              { hover: false }
+            );
+          }
+          this.hoveredStateId = e.features[0].id;
           this.map.setFeatureState(
             { source: 'poly', id: this.hoveredStateId },
-            { hover: false }
+            { hover: true }
           );
-        }
-        this.hoveredStateId = e.features[0].id;
-        this.map.setFeatureState(
-          { source: 'poly', id: this.hoveredStateId },
-          { hover: true }
-        );
-        // create popup on enter polygon at mouse enter location
-        this.popup = new mapboxgl.Popup({
-          className: 'my-class',
-        })
-          .setLngLat(e.lngLat)
-          // can't create component because the html is baked into the popup
-          .setHTML(
-            `<label>Name: ${this.localWeather.location.name}, ${this.localWeather.location.region}, ${this.localWeather.location.country}</label><br />
+          // create popup on enter polygon at mouse enter location
+          this.popup = new mapboxgl.Popup({
+            className: 'my-class',
+          })
+            .setLngLat(e.lngLat)
+            // can't create component because the html is baked into the popup
+            .setHTML(
+              `<label>Name: ${this.localWeather.location.name}, ${this.localWeather.location.region}, ${this.localWeather.location.country}</label><br />
             <label>Local Date and Time: ${this.localWeather.location.localtime}</label><br />
             <label>Tempreture: ${this.localWeather.current.temp_c}  &#8451 <img src="${this.localWeather.current.condition.icon}" alt="condition-icon"></label>
             `
-          )
-          .setMaxWidth('300px')
-          .addTo(this.map);
-      }
-    });
+            )
+            .setMaxWidth('300px')
+            .addTo(this.map);
+        }
+      });
+    } catch (error) {}
   }
 
   mapOnMouseLeave() {
