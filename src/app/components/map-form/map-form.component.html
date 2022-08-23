@@ -1,13 +1,14 @@
-<form (ngSubmit)="onSubmit()">
+<form (ngSubmit)="onSubmit()" class="form-group">
   <h2>Enter Your ZIP Code:</h2>
-  <div class="row">
-    <mat-form-field class="example-full-width col-sm-10" appearance="fill">
-      <mat-label>ZIP code</mat-label>
+  <div>
+    <mat-form-field class="form-item">
+      <mat-label>5 Digit ZIP Code</mat-label>
       <input
-        type="number"
+        type="text"
         matInput
         [formControl]="zipFormControl"
-        placeholder="Example: 22066"
+        placeholder="Example: 90210"
+        maxlength="5"
       />
       <mat-hint>Enter a valid ZIP code</mat-hint>
       <mat-error *ngIf="zipFormControl.hasError('required')">
@@ -15,7 +16,7 @@
       </mat-error>
     </mat-form-field>
     <button
-      class="col-sm-2"
+      class="form-item"
       type="submit"
       mat-raised-button
       color="primary"

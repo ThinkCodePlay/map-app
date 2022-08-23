@@ -8,7 +8,8 @@ import { HeaderComponent } from './components/header/header.component';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,16 +19,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MapComponent } from './components/map/map.component';
-import { PopupComponent } from './components/popup/popup.component';
+import { NetworkInterceptor } from './services/network.interceptor';
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, MapFormComponent, MapComponent, PopupComponent],
+  declarations: [AppComponent, HeaderComponent, MapFormComponent, MapComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FormsModule,
+    MatProgressSpinnerModule,
     HttpClientModule,
     MatToolbarModule,
     MatIconModule,
@@ -36,7 +38,13 @@ import { PopupComponent } from './components/popup/popup.component';
     MatInputModule,
     NgbModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: NetworkInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

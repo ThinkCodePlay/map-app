@@ -9,7 +9,7 @@ import { Subject } from 'rxjs';
 export class WeatherService {
   constructor(private http: HttpClient) {}
   newWeatherJsonEmitter = new Subject<any>();
-  private localWeather;
+  private localWeather: any;
   getLocalWeather(zipcode: string) {
     if (zipcode) {
       const req = this.http

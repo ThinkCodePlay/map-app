@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { Subscription } from 'rxjs';
+import { IFeatureCollection } from 'src/app/interface/geoJson';
+import { IMapBoxMouseEvent } from 'src/app/interface/mouseevent';
 import { MapsService } from 'src/app/services/maps.service';
 import { WeatherService } from 'src/app/services/weather.service';
 import { environment } from 'src/environments/environment';
@@ -29,28 +31,44 @@ export class MapComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.buildMap();
+    // subscribe to map service
     this.mapSub = this.mapsService.newGeoJsonEmitter.subscribe(
-      (geoJson) => {
-        this.mapGeoJson = geoJson;
-        this.drawPolygon(geoJson);
+      (geoJson: IFeatureCollection) => {
+        if (geoJson.features.length > 0) {
+          this.mapGeoJson = geoJson;
+          this.drawPolygon(geoJson);
+          this.centerOnMapPolygon(geoJson);
+          const currentZipcode = this.mapsService.currentZipcode;
+          console.log(currentZipcode);
+          this.weatherService.getLocalWeather(currentZipcode); // get local time and weather only if zipcode returned data
+        } else {
+          // TODO Toast
+          alert('no data for this zipcode');
+        }
       },
       (err) => {
+        // TODO Toast
         console.log(err);
       }
     );
+    // subscribe to weather service
     this.weatherSub = this.weatherService.newWeatherJsonEmitter.subscribe(
       (weather) => {
+        console.log('weather', weather);
         this.localWeather = weather;
         console.log(this.localWeather);
       },
       (err) => {
+        // TODO Toast
         console.log(err);
       }
     );
   }
 
+  // prevent memory leak!
   ngOnDestroy(): void {
     this.mapSub.unsubscribe();
+    this.weatherSub.unsubscribe();
   }
 
   buildMap() {
@@ -89,10 +107,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
       // When the user moves their mouse over the state-fill layer, we'll update the
       // feature state for the feature under the mouse.
-      this.map.on('mouseenter', 'poly', (e) => {
-        console.log(e);
-
-        if (e.features.length > 0) {
+      this.map.on('mouseenter', 'poly', (e: IMapBoxMouseEvent) => {
+        if (e.features && e.features.length > 0) {
           if (this.hoveredStateId !== null) {
             this.map.setFeatureState(
               { source: 'poly', id: this.hoveredStateId },
@@ -111,6 +127,7 @@ export class MapComponent implements OnInit, OnDestroy {
             className: 'my-class',
           })
             .setLngLat(e.lngLat)
+            // can't create component because the html is baked into the popup
             .setHTML(
               `<h2>time: ${this.localWeather.location.localtime}</h2>
               <h2>tempreture: ${this.localWeather.current.temp_c}  &#8451</h2>`
@@ -135,12 +152,10 @@ export class MapComponent implements OnInit, OnDestroy {
     });
   }
 
-  drawPolygon(geoJson: any) {
+  drawPolygon(geoJson: IFeatureCollection) {
     this.source = this.map.getSource('poly');
-
-    const feature = geoJson.features[0]; // will only show one feature at the moment
+    const feature = geoJson.features[0];
     const { type, geometry, properties } = feature;
-    const coords = geometry.coordinates;
 
     // the polygon coordinates to set
     let data = {
@@ -149,8 +164,26 @@ export class MapComponent implements OnInit, OnDestroy {
       properties,
     };
     this.source.setData(data);
-    const [lng, lat] = this.mapsService.calculateCenter(coords[0]);
-    this.changeLocation(lng, lat);
+  }
+
+  centerOnMapPolygon(geoJson: IFeatureCollection) {
+    const feature = geoJson.features[0];
+    const { geometry } = feature;
+    const coords = geometry.coordinates;
+
+    // Create a 'LngLatBounds' with both corners at the first coordinate.
+    const bounds = new mapboxgl.LngLatBounds(
+      coords[0][0] as mapboxgl.LngLatLike,
+      coords[0][0] as mapboxgl.LngLatLike
+    );
+
+    // Extend the 'LngLatBounds' to include every coordinate in the bounds result.
+    for (const coord of coords[0]) {
+      bounds.extend(coord as mapboxgl.LngLatLike);
+    }
+    this.map.fitBounds(bounds, {
+      padding: 20,
+    });
   }
 
   changeLocation(lng: number, lat: number) {

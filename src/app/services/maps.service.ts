@@ -2,36 +2,41 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { IFeatureCollection } from '../interface/geoJson';
 @Injectable({
   providedIn: 'root',
 })
 export class MapsService {
   constructor(private http: HttpClient) {}
 
+  currentZipcode: string = '';
   newGeoJsonEmitter = new Subject<any>();
-  // private geoJson;
+  // private geoJson: any;
 
   // getGeoJson(zipcode: string) {
-    // if zipcode
-  //   const req = this.http
-  //     .get(
-  //       `${environment.boundaries_url}/boundary/zipcode?zipcode=${zipcode}`,
-  //       {
-  //         headers: {
-  //           'X-RapidAPI-Key': environment['X-RapidAPI-Key'],
-  //           'X-RapidAPI-Host': environment['X-RapidAPI-Host'],
+  //   if (zipcode) {
+  //     this.currentZipcode = zipcode;
+  //     this.http
+  //       .get<IFeatureCollection>(
+  //         `${environment.boundaries_url}/boundary/zipcode?zipcode=${zipcode}`,
+  //         {
+  //           headers: {
+  //             'X-RapidAPI-Key': environment['X-RapidAPI-Key'],
+  //             'X-RapidAPI-Host': environment['X-RapidAPI-Host'],
+  //           },
+  //         }
+  //       )
+  //       .subscribe(
+  //         (res) => {
+  //           this.geoJson = res;
+  //           this.newGeoJsonEmitter.next(res);
+  //           console.log('succ', res);
   //         },
-  //       }
-  //     )
-  //     .subscribe(
-  //       (res) => {
-  //         this.geoJson = res;
-  //         this.newGeoJsonEmitter.next(res);
-  //       },
-  //       (err) => {
-  //         console.log(err);
-  //       }
-  //     );
+  //         (err) => {
+  //           console.log('err', err);
+  //         }
+  //       );
+  //   }
   // }
 
   calculateCenter(coords: any): [number, number] {
@@ -39,13 +44,13 @@ export class MapsService {
     let maxLng = coords[0][0];
     let minLat = coords[0][1];
     let maxLat = coords[0][1];
-    coords.forEach((element) => {
-      const [lng, lat] = element;
-      minLat = Math.min(minLat, lat);
-      maxLat = Math.max(maxLat, lat);
-      minLng = Math.min(minLng, lng);
-      maxLng = Math.max(minLng, lng);
-    });
+    // coords.forEach((element) => {
+    //   const [lng, lat] = element;
+    //   minLat = Math.min(minLat, lat);
+    //   maxLat = Math.max(maxLat, lat);
+    //   minLng = Math.min(minLng, lng);
+    //   maxLng = Math.max(minLng, lng);
+    // });
     const centerLng = (minLng + maxLng) / 2;
     const centerLat = (minLat + maxLat) / 2;
     console.log(centerLng, centerLat);
@@ -164,6 +169,7 @@ export class MapsService {
     ],
   };
   getGeoJson(zipcode: string) {
+    this.currentZipcode = zipcode;
     this.newGeoJsonEmitter.next(this.geoJson);
   }
 }
