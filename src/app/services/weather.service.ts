@@ -18,7 +18,7 @@ export class WeatherService {
     if (zipcode) {
       this.http
         .get(
-          `http://api.weatherapi.com/v1/current.json?key=${environment.weather_key}&q=${zipcode}&aqi=no`
+          `${environment.weather_api_domain}?key=${environment.weather_key}&q=${zipcode}&aqi=no`
         )
         .subscribe(
           (res) => {

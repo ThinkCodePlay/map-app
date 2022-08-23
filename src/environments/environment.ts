@@ -12,6 +12,7 @@ export const environment = {
     accessToken:
       'pk.eyJ1IjoiandlYmRldiIsImEiOiJjbDc0ZmU1NjAwOW90M250aDJtZG5tMmJiIn0.YdqgvikWgQKr1Yvq45N75Q',
   },
+  weather_api_domain: "https://api.weatherapi.com/v1/current.json",
   weather_key: "692e24bb928b4bb5bad200827222208"
 };
 
