@@ -3,7 +3,7 @@
 ### What is this app? Where am I?
 Use this app to find the location by ZIP code and see the local time and weather.
 
-Check out the **live demo** [here](https://map-bsqxe7o4f-thinkcodeplay.vercel.app/).
+Check out the **live demo** [here](https://map-app-flame.vercel.app/).
 
 ## Usage
 
