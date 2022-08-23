@@ -2,12 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Subject } from 'rxjs';
+import { SnackbarService } from './snackbar.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WeatherService {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private snackbarService: SnackbarService
+  ) {}
   newWeatherJsonEmitter = new Subject<any>();
   private localWeather: any;
   getLocalWeatherByZipCode(zipcode: string) {
@@ -18,12 +22,14 @@ export class WeatherService {
         )
         .subscribe(
           (res) => {
-            console.log(res);
             this.localWeather = res;
             this.newWeatherJsonEmitter.next(res);
           },
           (err) => {
-            console.log(err);
+            this.snackbarService.openSnackBar(
+              'Hmm... It seems an error accord ',
+              'Dismiss'
+            );
           }
         );
     }

@@ -53,7 +53,6 @@ export class MapComponent implements OnInit, OnDestroy {
           'Hmm... It seems an error accord ',
           'Dismiss'
         );
-        console.log(err);
       }
     );
     // subscribe to weather service
