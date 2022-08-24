@@ -17,7 +17,7 @@ Three 3rd party packages were used to fetch and display the data:
 2. [boundaries-io](https://rapidapi.com/VanitySoft/api/boundaries-io-1)
 3. [weatherapi](https://www.weatherapi.com)
 
-To integrate with these APIs you must acquire a **valid token** and insert them into the environment variables (***be carful not to expose them in production**).
+To integrate with these APIs you must acquire a **valid token** and insert them into the environment variables (***be careful not to expose them in production**).
 
 ## Development server
 
