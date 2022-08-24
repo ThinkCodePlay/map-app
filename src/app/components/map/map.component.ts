@@ -49,10 +49,7 @@ export class MapComponent implements OnInit, OnDestroy {
         }
       },
       (err) => {
-        this.snackbarService.openSnackBar(
-          'Error fetching location',
-          'Dismiss'
-        );
+        this.snackbarService.openSnackBar('Error fetching location', 'Dismiss');
       }
     );
     // subscribe to weather service
@@ -62,7 +59,7 @@ export class MapComponent implements OnInit, OnDestroy {
       },
       (err) => {
         this.snackbarService.openSnackBar(
-          'Error fetching local weather data',
+          'Error fetching local weather and ',
           'Dismiss'
         );
       }
@@ -76,48 +73,56 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   buildMap() {
-    this.map = new mapboxgl.Map({
-      accessToken: environment.mapbox.accessToken,
-      container: 'map',
-      style: this.style,
-      zoom: 12,
-      center: [35.21371, 31.768319], // jerusalem
-    });
-    this.map.addControl(new mapboxgl.NavigationControl());
+    try {
+      this.map = new mapboxgl.Map({
+        accessToken: environment.mapbox.accessToken,
+        container: 'map',
+        style: this.style,
+        zoom: 4,
+        center: [-95.712891, 37.09024], // United States
+      });
+      this.map.addControl(new mapboxgl.NavigationControl());
 
-    this.mapOnLoadSetting();
+      this.mapOnLoadSetting();
+    } catch (error) {
+      console.log(error); // log this somewhere
+    }
   }
 
   mapOnLoadSetting() {
-    this.map.on('load', (event) => {
-      /// register source
-      this.map.addSource('poly', {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: [],
-        },
-        generateId: true,
-      });
+    try {
+      this.map.on('load', (event) => {
+        /// register source
+        this.map.addSource('poly', {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: [],
+          },
+          generateId: true,
+        });
 
-      /// create map layers do display polygon
-      this.map.addLayer({
-        id: 'poly',
-        source: 'poly',
-        type: 'fill',
-        layout: {},
-        paint: {
-          'fill-color': '#0080ff', // blue color fill
-          'fill-opacity': 0.5,
-        },
-      });
+        /// create map layers do display polygon
+        this.map.addLayer({
+          id: 'poly',
+          source: 'poly',
+          type: 'fill',
+          layout: {},
+          paint: {
+            'fill-color': '#0080ff', // blue color fill
+            'fill-opacity': 0.5,
+          },
+        });
 
-      this.mapOnMouseEnterSetting();
-      this.mapOnMouseLeave();
-    });
+        this.mapOnMouseEnter();
+        this.mapOnMouseLeave();
+      });
+    } catch (error) {
+      console.log(error); // log this somewhere
+    }
   }
 
-  mapOnMouseEnterSetting() {
+  mapOnMouseEnter() {
     try {
       // When the user moves their mouse over the state-fill layer, we'll update the
       // feature state for the feature under the mouse.
@@ -150,59 +155,77 @@ export class MapComponent implements OnInit, OnDestroy {
             .addTo(this.map);
         }
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error); // log this somewhere
+    }
   }
 
   mapOnMouseLeave() {
-    // When the mouse leaves the state-fill layer, update the feature state of the
-    // previously hovered feature.
-    this.map.on('mouseleave', 'poly', () => {
-      if (this.hoveredStateId !== null) {
-        this.map.setFeatureState(
-          { source: 'poly', id: this.hoveredStateId },
-          { hover: false }
-        );
-      }
-      this.hoveredStateId = null;
-      this.popup.remove();
-    });
+    try {
+      // When the mouse leaves the state-fill layer, update the feature state of the
+      // previously hovered feature.
+      this.map.on('mouseleave', 'poly', () => {
+        if (this.hoveredStateId !== null) {
+          this.map.setFeatureState(
+            { source: 'poly', id: this.hoveredStateId },
+            { hover: false }
+          );
+        }
+        this.hoveredStateId = null;
+        this.popup.remove();
+      });
+    } catch (error) {
+      console.log(error); // log this somewhere
+    }
   }
 
   drawPolygon(geoJson: IFeatureCollection) {
-    this.source = this.map.getSource('poly');
-    const feature = geoJson.features[0];
-    const { type, geometry, properties } = feature;
+    try {
+      this.source = this.map.getSource('poly');
+      const feature = geoJson.features[0];
+      const { type, geometry, properties } = feature;
 
-    // the polygon coordinates to set
-    let data = {
-      type,
-      geometry,
-      properties,
-    };
-    this.source.setData(data);
+      // the polygon coordinates to set
+      let data = {
+        type,
+        geometry,
+        properties,
+      };
+      this.source.setData(data);
+    } catch (error) {
+      console.log(error); // log this somewhere
+    }
   }
 
   centerOnMapPolygon(geoJson: IFeatureCollection) {
-    const feature = geoJson.features[0];
-    const { geometry } = feature;
-    const coords = geometry.coordinates;
+    try {
+      const feature = geoJson.features[0];
+      const { geometry } = feature;
+      const coords = geometry.coordinates;
 
-    // Create a 'LngLatBounds' with both corners at the first coordinate.
-    const bounds = new mapboxgl.LngLatBounds(
-      coords[0][0] as mapboxgl.LngLatLike,
-      coords[0][0] as mapboxgl.LngLatLike
-    );
+      // Create a 'LngLatBounds' with both corners at the first coordinate.
+      const bounds = new mapboxgl.LngLatBounds(
+        coords[0][0] as mapboxgl.LngLatLike,
+        coords[0][0] as mapboxgl.LngLatLike
+      );
 
-    // Extend the 'LngLatBounds' to include every coordinate in the bounds result.
-    for (const coord of coords[0]) {
-      bounds.extend(coord as mapboxgl.LngLatLike);
+      // Extend the 'LngLatBounds' to include every coordinate in the bounds result.
+      for (const coord of coords[0]) {
+        bounds.extend(coord as mapboxgl.LngLatLike);
+      }
+      this.map.fitBounds(bounds, {
+        padding: 20,
+      });
+    } catch (error) {
+      console.log(error); // log this somewhere
     }
-    this.map.fitBounds(bounds, {
-      padding: 20,
-    });
   }
 
   changeLocation(lng: number, lat: number) {
-    this.map.flyTo({ center: [lng, lat] });
+    try {
+      this.map.flyTo({ center: [lng, lat] });
+    } catch (error) {
+      console.log(error); // log this somewhere
+    }
   }
 }
