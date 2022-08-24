@@ -1,7 +1,7 @@
-# Angular Map App🗺️ 
+# Angular Map-App🗺️ 
 
-### What is this app? Where am I?
-Use this app to find the location by ZIP code and see the local time and weather.
+### Description
+This web app displays US locations and weather by its ZIP code.
 
 Check out the **live demo** [here](https://map-app-flame.vercel.app/).
 
@@ -10,18 +10,18 @@ Check out the **live demo** [here](https://map-app-flame.vercel.app/).
 ### Dependencies
 
 The frontend of this app was built using [**Angular**](https://angular.io/) framework.
-For styling used [**Bootstrap**](https://getbootstrap.com/) and [**Angular  Material UI**](https://material.angular.io/).
+For styling I used [**Bootstrap**](https://getbootstrap.com/) and [**Angular  Material UI**](https://material.angular.io/).
 
-Three APIs were used to fetch the data:
+Three 3rd party packages were used to fetch and display the data:
 1. [Mapbox GL JS](https://www.mapbox.com/mapbox-gljs)
 2. [boundaries-io](https://rapidapi.com/VanitySoft/api/boundaries-io-1)
 3. [weatherapi](https://www.weatherapi.com)
 
-To integrate with these APIs you must acquire a **valid token** and insert it into the environment variables.
+To integrate with these APIs you must acquire a **valid token** and insert them into the environment variables (***be carful not to expose them in production**).
 
 ## Development server
 
-App requires [Node.js](https://nodejs.org/) and [Angular](https://angular.io/)  to run.
+Map-App requires [Node.js](https://nodejs.org/) and [Angular](https://angular.io/)  to run.
 
 
 Install the dependencies with:
@@ -30,4 +30,4 @@ npm install
 ```
 
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`.
+Run `ng serve` for a dev server, navigate to `http://localhost:4200/`.
