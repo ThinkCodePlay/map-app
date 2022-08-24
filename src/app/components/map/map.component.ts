@@ -43,14 +43,14 @@ export class MapComponent implements OnInit, OnDestroy {
           this.weatherService.getLocalWeatherByZipCode(currentZipcode);
         } else {
           this.snackbarService.openSnackBar(
-            'No data for this zipcode',
+            'There is no data for this zip code',
             'Dismiss'
           );
         }
       },
       (err) => {
         this.snackbarService.openSnackBar(
-          'Hmm... It seems an error accord ',
+          'Error fetching location',
           'Dismiss'
         );
       }
@@ -62,7 +62,7 @@ export class MapComponent implements OnInit, OnDestroy {
       },
       (err) => {
         this.snackbarService.openSnackBar(
-          'Hmm... Something is wrong with the weather',
+          'Error fetching local weather data',
           'Dismiss'
         );
       }

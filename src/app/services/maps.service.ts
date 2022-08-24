@@ -37,7 +37,7 @@ export class MapsService {
           },
           (err) => {
             this.snackbarService.openSnackBar(
-              'Hmm... It seems an error accord ',
+              'Error fetching zip code',
               'Dismiss'
             );
           }

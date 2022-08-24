@@ -21,12 +21,20 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MapComponent } from './components/map/map.component';
 import { NetworkInterceptor } from './services/network.interceptor';
 import { SpinnerComponent } from './components/UI/spinner/spinner.component';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { LayoutComponent } from './components/UI/layout/layout.component';
 import { PageNotFoundComponent } from './components/UI/page-not-found/page-not-found.component';
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, MapFormComponent, MapComponent, SpinnerComponent, LayoutComponent, PageNotFoundComponent],
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    MapFormComponent,
+    MapComponent,
+    SpinnerComponent,
+    LayoutComponent,
+    PageNotFoundComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -41,7 +49,7 @@ import { PageNotFoundComponent } from './components/UI/page-not-found/page-not-f
     MatFormFieldModule,
     MatInputModule,
     NgbModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
   providers: [
     {
